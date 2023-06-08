@@ -51,6 +51,11 @@ export function queryRinna(id: number, prompt: string): string {
                 rinnnaResponseAccum.current += r.response;
                 break;
               case "End":
+                // </s>はつけ直す
+                rinnnaResponseAccum.current =
+                  rinnnaResponseAccum.current.replace(/<\/s>/g, "");
+                rinnnaResponseAccum.current += "</s>";
+
                 if (unlisten.current) {
                   unlisten.current();
                   unlisten.current = undefined;

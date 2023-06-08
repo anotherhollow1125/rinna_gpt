@@ -81,7 +81,13 @@ async fn rinna(
     id: usize,
     prompt: String,
     request_tx: tauri::State<'_, Sender<Request>>,
+    rinna_standby: tauri::State<'_, Mutex<RinnaStandby>>,
 ) -> Result<(), String> {
+    {
+        let mut standby_state = rinna_standby.lock().unwrap();
+        standby_state.0 = false;
+    }
+
     let prompt = prompt.replace("[exit]", "#exit#");
     short_sleep(100).await;
 
@@ -94,12 +100,21 @@ async fn rinna(
 }
 
 struct ReactReady(bool);
+struct RinnaStandby(bool);
 
 #[tauri::command]
 async fn react_ready(ready_state: tauri::State<'_, Mutex<ReactReady>>) -> Result<(), String> {
     let mut ready_state = ready_state.lock().unwrap();
     ready_state.0 = true;
     Ok(())
+}
+
+#[tauri::command]
+async fn is_rinna_standby(
+    standby_state: tauri::State<'_, Mutex<RinnaStandby>>,
+) -> Result<bool, String> {
+    let standby_state = standby_state.lock().unwrap();
+    Ok(standby_state.0)
 }
 
 #[tokio::main]
@@ -117,7 +132,7 @@ async fn main() -> Result<()> {
         response_rx: rinna_response_rx,
         output_handle,
         input_handle,
-    } = init_rinna("./tmp.exe").await?;
+    } = init_rinna("./rinna.exe").await?;
 
     let pt = prompt_tx.clone();
     let (exit_tx, mut exit_rx) = channel(1);
@@ -133,10 +148,15 @@ async fn main() -> Result<()> {
     let (request_tx, mut response_rx, session_handle) =
         prepare_request_handler_thread(prompt_tx, token_rx, rinna_response_rx, standby_tx);
 
-    let ready_state = Mutex::new(ReactReady(false));
+    let react_ready_state = Mutex::new(ReactReady(false));
+    let rinna_standby_state = Mutex::new(RinnaStandby(false));
 
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![rinna, react_ready])
+        .invoke_handler(tauri::generate_handler![
+            rinna,
+            react_ready,
+            is_rinna_standby
+        ])
         .setup(|app| {
             let main_window = app.get_window("main").unwrap();
 
@@ -148,6 +168,11 @@ async fn main() -> Result<()> {
 
                 while let Some(_) = standby_rx.recv().await {
                     log::info!("Standby");
+                    {
+                        let s = mw.state::<Mutex<RinnaStandby>>();
+                        let mut standby_state = s.lock().unwrap();
+                        standby_state.0 = true;
+                    }
                     let r = mw.emit("rinna-standby", ());
 
                     if let Err(e) = r {
@@ -185,7 +210,8 @@ async fn main() -> Result<()> {
             _ => {}
         })
         .manage(request_tx)
-        .manage(ready_state)
+        .manage(react_ready_state)
+        .manage(rinna_standby_state)
         .run(tauri::generate_context!())
         .context("error while running tauri application")?;
 

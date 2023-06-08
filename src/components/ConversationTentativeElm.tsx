@@ -9,10 +9,10 @@ export default function ConversationTentativeElm({
   id,
   prompt,
 }: ConversationTentativeElmProps) {
-  const rinnaResponse = queryRinna(id, prompt).replace("<NL>", "\n");
+  const rinnaResponse = queryRinna(id, prompt).replace(/<NL>/g, "\n");
 
   const text = rinnaResponse.includes("</s>")
-    ? rinnaResponse.replace("</s>", "")
+    ? rinnaResponse.replace(/<\/s>/g, "")
     : `${rinnaResponse}▊`;
   return (
     <>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Paper from "@mui/material/Paper";
 import InputBase from "@mui/material/InputBase";
-import Divider from "@mui/material/Divider";
+import { TextField } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import SendIcon from "@mui/icons-material/Send";
 import PendingIcon from "@mui/icons-material/Pending";
@@ -45,24 +45,36 @@ export default function PromptFieldElm({
   return (
     <Paper
       component="form"
-      sx={{ p: "2px 4px", display: "flex", alignItems: "center", width: 400 }}
+      sx={{
+        p: "0px 6px 0px 0px",
+        m: "0 auto",
+        display: "flex",
+        alignItems: "center",
+        width: 670,
+        borderRadius: "0.75rem",
+      }}
     >
-      <InputBase
-        sx={{ ml: 1, flex: 1 }}
-        placeholder="Send a message."
-        inputProps={{ "aria-label": "Send a message." }}
+      <TextField
+        multiline
+        sx={{
+          px: 1,
+          flex: 1,
+          "& .MuiOutlinedInput-notchedOutline": {
+            border: "none",
+          },
+        }}
+        placeholder={standby ? "Send a message." : "Wait for Rinna..."}
         value={prompt}
         onChange={(e) => {
           setPrompt(e.target.value);
         }}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
+        onKeyPress={(e: React.KeyboardEvent<HTMLDivElement>) => {
+          if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
             sendPrompt();
           }
         }}
       />
-      <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
       {button}
     </Paper>
   );

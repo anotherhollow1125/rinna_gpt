@@ -19,6 +19,9 @@ export default function useRinnaStandby(): RinnaStandbyRes {
 
       console.log("react_ready invoked");
 
+      const standby = await invoke<boolean>("is_rinna_standby", {});
+      setStandby(standby);
+
       const unlsn = await listen("rinna-standby", (_event: Event<void>) => {
         setStandby(true);
       });

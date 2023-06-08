@@ -3,8 +3,9 @@ import PromptFieldElm from "@/components/PromptFieldElm";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useMemo } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import ConversationTentativeElm from "@/components/ConversationTentativeElm";
+import ConversationElm from "@/components/ConversationElm";
 import useRinnaStandby from "@/hooks/rinna-standby-hook";
+import Grid from "@mui/material/Grid/Grid";
 
 interface Query {
   id: number;
@@ -35,22 +36,55 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <div>
-        <PromptFieldElm
-          send={send}
-          standby={rinnaStandby}
-          setStandby={setRinnaStandby}
-        />
-      </div>
-      <div>
+      <Grid
+        container
+        sx={{
+          width: "100%",
+          alignItems: "center",
+          justifyContent: "center",
+          m: "0 auto",
+        }}
+      >
         {conversationList.map((conversation) => (
-          <ConversationTentativeElm
+          <Grid
+            item
+            xs={12}
+            sx={{
+              alignItems: "center",
+              justifyContent: "center",
+            }}
             key={conversation.id}
-            id={conversation.id}
-            prompt={conversation.prompt}
-          />
+          >
+            <ConversationElm
+              id={conversation.id}
+              prompt={conversation.prompt}
+            />
+          </Grid>
         ))}
-      </div>
+      </Grid>
+      <Grid
+        container
+        sx={{
+          position: "absolute",
+          bottom: "0",
+          width: "100%",
+          padding: "20px",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Grid
+          item
+          xs={12}
+          sx={{ alignItems: "center", justifyContent: "center" }}
+        >
+          <PromptFieldElm
+            send={send}
+            standby={rinnaStandby}
+            setStandby={setRinnaStandby}
+          />
+        </Grid>
+      </Grid>
     </ThemeProvider>
   );
 }
