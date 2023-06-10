@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 
 *.exe
+docker_env/
+rinna_app/build/

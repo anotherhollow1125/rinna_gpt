@@ -34,7 +34,7 @@ pub async fn init_rinna(rinna_path: impl AsRef<Path>) -> Result<ExecRinnaRet> {
 
     let input_handle = tokio::spawn(async move {
         while let Some(prompt) = prompt_rx.recv().await {
-            let prompt = format!("{}\n", prompt.replace("\n", "<NL>"));
+            let prompt = format!("{}\n", prompt.replace("\r", "").replace("\n", "<NL>"));
             let prompt = CString::new(prompt)?;
             stdin
                 .write_all(prompt.as_bytes())
@@ -57,7 +57,11 @@ pub async fn init_rinna(rinna_path: impl AsRef<Path>) -> Result<ExecRinnaRet> {
 
             log::info!("Rinna: {}", word);
 
-            let response = word.replace("> ", "").to_string();
+            let response = word
+                .replace("> ", "")
+                .replace("\r", "")
+                .replace("\n", "<NL>")
+                .to_string();
 
             if response.len() > 0 {
                 response_tx

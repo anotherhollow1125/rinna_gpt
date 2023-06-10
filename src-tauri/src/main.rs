@@ -37,9 +37,13 @@ fn prepare_request_handler_thread(
                 .send(())
                 .await
                 .context("Failed to send standby")?;
+
             let Some(Request { id, prompt }) = request_rx.recv().await else {
                 break;
             };
+
+            // Clear the response queue
+            while let Ok(_) = rinna_response_rx.try_recv() {}
 
             prompt_tx
                 .send(prompt)
