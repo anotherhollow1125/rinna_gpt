@@ -34,13 +34,13 @@ jobs:
           workflow: rinna_build.yaml
           workflow_conclusion: success
           name: rinna_exe
-          path: ./rinna.exe
+          path: ./rinna_exe
 
       - name: Check exist of rinna.exe
         run: |
           ls .
           if (!(Test-Path "rinna.exe")) { exit 1 }
-          mv rinna.exe src-tauri/rinna.exe
+          mv rinna_exe/rinna.exe src-tauri/rinna.exe
 
       - name: Install app dependencies and build web
         run: yarn && yarn build
