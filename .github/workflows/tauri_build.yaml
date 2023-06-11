@@ -40,6 +40,7 @@ jobs:
         run: |
           ls .
           if (!(Test-Path "rinna.exe")) { exit 1 }
+          mv rinna.exe src-tauri/rinna.exe
 
       - name: Install app dependencies and build web
         run: yarn && yarn build
