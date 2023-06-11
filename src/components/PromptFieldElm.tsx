@@ -19,11 +19,13 @@ export default function PromptFieldElm({
 }: PromptFieldElmProps) {
   const [prompt, setPrompt] = useState("");
 
-  const sendPrompt = () => {
-    send(prompt);
-    setStandby(false);
-    setPrompt("");
-  };
+  const sendPrompt = standby
+    ? () => {
+        send(prompt);
+        setStandby(false);
+        setPrompt("");
+      }
+    : () => {};
 
   const button = standby ? (
     <IconButton

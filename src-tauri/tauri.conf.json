@@ -16,18 +16,29 @@
       "shell": {
         "all": false,
         "open": true
+      },
+      "fs": {
+        "scope": ["$RESOURCE/*"]
       }
     },
     "bundle": {
       "active": true,
       "targets": "all",
-      "identifier": "com.tauri.dev",
+      "identifier": "rinna.namnium.work",
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",
         "icons/128x128@2x.png",
         "icons/icon.icns",
         "icons/icon.ico"
+      ],
+      "windows": {
+        "wix": {
+          "language": "ja-JP"
+        }
+      },
+      "resources": [
+        "rinna.exe"
       ]
     },
     "security": {

@@ -1,6 +1,7 @@
 use anyhow::{anyhow, Context, Result};
 use rinna_gui::{exit_rinna, init_rinna, ExecRinnaRet};
 use std::io::{stdout, Write};
+#[allow(unused_imports)]
 use std::path::Path;
 use tokio::task::JoinHandle;
 
@@ -15,10 +16,18 @@ use dialoguer::Input;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    // println!("{}", std::env::current_dir().unwrap().display());
+    let mut rinna_path = std::env::current_exe()
+        .unwrap()
+        .parent()
+        .unwrap()
+        .to_path_buf();
+    rinna_path.push("../rinna.exe");
+    println!("{}", rinna_path.display());
+
     println!("Please wait for a while...");
 
-    let true = Path::new("./rinna.exe").exists() else {
+    // let true = Path::new("rinna.exe").exists() else {
+    let true = rinna_path.exists() else {
         return Err(anyhow!("!! rinna.exe does not exist"));
     };
 

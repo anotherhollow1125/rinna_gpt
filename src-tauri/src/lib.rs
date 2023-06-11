@@ -18,8 +18,15 @@ pub struct ExecRinnaRet {
     pub input_handle: JoinHandle<Result<()>>,
 }
 
+const CREATE_NO_WINDOW: u32 = 0x08000000;
+
 pub async fn init_rinna(rinna_path: impl AsRef<Path>) -> Result<ExecRinnaRet> {
-    let mut child = Command::new(rinna_path.as_ref())
+    let mut cmd = Command::new(rinna_path.as_ref());
+
+    #[cfg(target_os = "windows")]
+    let cmd = cmd.creation_flags(CREATE_NO_WINDOW);
+
+    let mut child = cmd
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .spawn()

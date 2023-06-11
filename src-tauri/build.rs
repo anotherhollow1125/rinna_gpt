@@ -1,4 +1,5 @@
 // copy rinna.exe to target dir
+/*
 fn copy_rinna_exe() {
     let Ok(out_dir) = std::env::var("OUT_DIR") else {
         println!("cargo:warning=OUT_DIR not found");
@@ -9,9 +10,10 @@ fn copy_rinna_exe() {
         return;
     };
 }
+*/
 
 fn main() {
-    copy_rinna_exe();
+    // copy_rinna_exe();
 
     tauri_build::build()
 }

@@ -1,4 +1,4 @@
-pipenv run pyinstaller --onefile --hidden-import=pytorch `
+pipenv run pyinstaller --onefile --noconsole --hidden-import=pytorch `
 --collect-data torch `
 --copy-metadata torch `
 --copy-metadata tqdm `
