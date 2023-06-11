@@ -39,7 +39,7 @@ jobs:
       - name: Check exist of rinna.exe
         run: |
           ls .
-          if (!(Test-Path "rinna.exe")) { exit 1 }
+          if (!(Test-Path "rinna_exe/rinna.exe")) { exit 1 }
           mv rinna_exe/rinna.exe src-tauri/rinna.exe
 
       - name: Install app dependencies and build web
