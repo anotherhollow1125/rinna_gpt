@@ -27,7 +27,7 @@ jobs:
           pip install -r requirements.txt
       - name: Run Pyinstaller
         run: |
-          pyinstaller --onefile --noconsole --hidden-import=pytorch `
+          pyinstaller --onefile --hidden-import=pytorch `
           --collect-data torch `
           --copy-metadata torch `
           --copy-metadata tqdm `
