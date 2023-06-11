@@ -1,0 +1,58 @@
+name: TauriBuild
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+# 参考
+# https://docs.github.com/ja/actions/automating-builds-and-tests/building-and-testing-python
+# https://minerva.mamansoft.net/Notes/GitHub+Action%E3%81%A7%E3%82%B8%E3%83%A7%E3%83%96%E3%82%92%E7%9B%B4%E5%88%97%E5%AE%9F%E8%A1%8C
+# https://scrapbox.io/tosuke/GitHub_Actions%E3%81%AEArtifact%E3%82%92%E9%A7%86%E4%BD%BF%E3%81%97%E3%81%A6Workflow%E9%96%93%E3%81%A7%E3%83%87%E3%83%BC%E3%82%BF%E5%85%B1%E6%9C%89%E3%81%99%E3%82%8B
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Node.js setup
+        uses: actions/setup-node@v1
+        with:
+          node-version: 18
+
+      - name: Rust setup
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: Download artifact
+        id: download-artifact
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: rinna_build.yaml
+          workflow_conclusion: success
+          name: rinna_exe
+          path: ./rinna.exe
+
+      - name: Check exist of rinna.exe
+        run: |
+          ls .
+          if (!(Test-Path "rinna.exe")) { exit 1 }
+          mv rinna.exe src-tauri/rinna.exe
+
+      - name: Install app dependencies and build web
+        run: yarn && yarn build
+
+      - name: Build the app
+        uses: tauri-apps/tauri-action@v0.3
+
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: v__VERSION__ # tauri-action replaces \_\_VERSION\_\_ with the app version
+          releaseName: "v__VERSION__"
+          releaseBody: "See the assets to download this version and install."
+          releaseDraft: true
+          prerelease: false
