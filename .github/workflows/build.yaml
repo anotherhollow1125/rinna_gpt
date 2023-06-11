@@ -1,0 +1,86 @@
+name: Build & Release
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+# 参考
+# https://docs.github.com/ja/actions/automating-builds-and-tests/building-and-testing-python
+
+jobs:
+  build:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: ./rinna_app
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11.3"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run Pyinstaller
+        run: |
+          pipenv run pyinstaller --onefile --noconsole --hidden-import=pytorch \
+          --collect-data torch \
+          --copy-metadata torch \
+          --copy-metadata tqdm \
+          --copy-metadata regex \
+          --copy-metadata requests \
+          --copy-metadata packaging \
+          --copy-metadata filelock \
+          --copy-metadata numpy \
+          --copy-metadata tokenizers \
+          --hidden-import="sklearn.utils._cython_blas" \
+          --hidden-import="sklearn.neighbors.typedefs" \
+          --hidden-import="sklearn.neighbors.quad_tree" \
+          --hidden-import="sklearn.tree" \
+          --hidden-import="sklearn.tree._utils" \
+          main.py
+          mv ./dist/main.exe ./rinna.exe
+      - name: Save rinna.exe
+        uses: actions/upload-artifact@v2
+        if: '!failure()'
+        with:
+          name: rinna_exe
+          path: ./rinna.exe
+  release:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Node.js setup
+        uses: actions/setup-node@v1
+        with:
+          node-version: 18
+
+      - name: Rust setup
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: load rinna.exe
+        uses: actions/download-artifact@v2
+        with:
+          name: rinna_exe
+
+      - name: Install app dependencies and build web
+        run: yarn && yarn build
+
+      - name: Build the app
+        uses: tauri-apps/tauri-action@v0.3
+
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: v__VERSION__ # tauri-action replaces \_\_VERSION\_\_ with the app version
+          releaseName: "v__VERSION__"
+          releaseBody: "See the assets to download this version and install."
+          releaseDraft: true
+          prerelease: false
