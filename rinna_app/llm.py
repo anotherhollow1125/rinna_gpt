@@ -71,7 +71,7 @@ def llm_main(max_length = 128):
 
         output = ""
         for word in gradually_generate(model, tokenizer, token_ids, max_length):
-            word = word.replace(": ", "; ")
+            word = word.replace("> ", "; ")
             print(word, end='', flush=True)
             output += word
         print()
