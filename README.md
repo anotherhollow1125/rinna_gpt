@@ -7,8 +7,8 @@
 
 [Rinna社](https://rinna.co.jp/)が提供してくださっている[rinna/japanese-gpt-neox-3.6b-instruction-sft](https://huggingface.co/rinna/japanese-gpt-neox-3.6b-instruction-sft)をローカルでPythonで実行するプログラムを、PyInstallerで実行ファイルとし、Tauriでデスクトップアプリ化したものです。
 
-リリースページ: https://github.com/anotherhollow1125/rinna_gpt/releases
-インストーラ: https://github.com/anotherhollow1125/rinna_gpt/releases/download/v0.0.5/rinna_gui_0.0.5_x64_ja-JP.msi
+- リリースページ: https://github.com/anotherhollow1125/rinna_gpt/releases
+- インストーラ: https://github.com/anotherhollow1125/rinna_gpt/releases/download/v0.0.5/rinna_gui_0.0.5_x64_ja-JP.msi
 
 ## 想定環境
 
