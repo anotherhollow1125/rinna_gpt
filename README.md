@@ -1,6 +1,6 @@
 # Rinna GPT
 
-![rinna gpt demo](..github/rinna.gif)
+![rinna gpt demo](.github/rinna.gif)
 
 [![RinnaBuild](https://github.com/anotherhollow1125/rinna_gpt/actions/workflows/rinna_build.yaml/badge.svg)](https://github.com/anotherhollow1125/rinna_gpt/actions/workflows/rinna_build.yaml)
 [![TauriBuild](https://github.com/anotherhollow1125/rinna_gpt/actions/workflows/tauri_build.yaml/badge.svg)](https://github.com/anotherhollow1125/rinna_gpt/actions/workflows/tauri_build.yaml)
